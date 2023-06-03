@@ -23,15 +23,16 @@ struct information {
     }
 };
 
+template <class T>
 class AVLNode {
 public:
-    int key;
+    T key;
     int height;
-    AVLNode* left;
-    AVLNode* right;
-    information* info;
+    AVLNode<T> *left;
+    AVLNode<T> *right;
+    information *info;
 
-    AVLNode(int k, information* t) {
+    AVLNode(T k, information* t) {
         key = k;
         height = 1;
         left = NULL;
@@ -40,32 +41,32 @@ public:
     }
 };
 
+template <class T>
 class AVLTree {
 private:
-
-    int height(AVLNode *node) {
+    int height(AVLNode<T> *node) {
         if (node == NULL) {
             return 0;
         }
         return node->height;
     }
 
-    int balanceFactor(AVLNode *node) {
+    int balanceFactor(AVLNode<T> *node) {
         if (node == NULL) {
             return 0;
         }
         return height(node->left) - height(node->right);
     }
 
-    void updateHeight(AVLNode *node) {
+    void updateHeight(AVLNode<T> *node) {
         int leftHeight = height(node->left);
         int rightHeight = height(node->right);
         node->height = max(leftHeight, rightHeight) + 1;
     }
 
-    AVLNode *rotateLeft(AVLNode *node) {
-        AVLNode *rightChild = node->right;
-        AVLNode *leftGrandChild = rightChild->left;
+    AVLNode<T> *rotateLeft(AVLNode<T> *node) {
+        AVLNode<T> *rightChild = node->right;
+        AVLNode<T> *leftGrandChild = rightChild->left;
         rightChild->left = node;
         node->right = leftGrandChild;
         updateHeight(node);
@@ -73,9 +74,9 @@ private:
         return rightChild;
     }
 
-    AVLNode *rotateRight(AVLNode *node) {
-        AVLNode *leftChild = node->left;
-        AVLNode *rightGrandChild = leftChild->right;
+    AVLNode<T> *rotateRight(AVLNode<T> *node) {
+        AVLNode<T> *leftChild = node->left;
+        AVLNode<T> *rightGrandChild = leftChild->right;
         leftChild->right = node;
         node->left = rightGrandChild;
         updateHeight(node);
@@ -83,7 +84,7 @@ private:
         return leftChild;
     }
 
-    AVLNode *balance(AVLNode *node) {
+    AVLNode<T> *balance(AVLNode<T> *node) {
         updateHeight(node);
         int bf = balanceFactor(node);
         if (bf > 1) {
@@ -100,7 +101,7 @@ private:
         return node;
     }
 
-    AVLNode *insertHelper(AVLNode *node, int key, information *t) {
+    AVLNode<T> *insertHelper(AVLNode<T> *node, T key, information *t) {
         if (node == NULL) {
             return new AVLNode(key, t);
         }
@@ -112,7 +113,7 @@ private:
         return balance(node);
     }
 
-    void printHelper(AVLNode *node) {
+    void printHelper(AVLNode<T> *node) {
         if (node != NULL) {
             printHelper(node->left);
             cout << node->key << " " << node->info->fullname << endl;
@@ -120,31 +121,28 @@ private:
         }
     }
 
-    void searchHelper(AVLNode *node, int key) {
+    void searchHelper(AVLNode<T> *node, T key) {
         if (node != NULL) {
-            if (node->key == key) {
+            if (node->key == key)
                 print_information(node);
+            if (node->key > key) {
+                searchHelper(node->left, key);
             }
             else {
-                if (node->key > key) {
-                    searchHelper(node->left, key);
-                }
-                else {
-                    searchHelper(node->right, key);
-                }
+                searchHelper(node->right, key);
             }
         }
         else cout << "Not found" << endl;
     }
 
 public:
-    AVLNode *root;
+    AVLNode<T> *root;
 
     AVLTree() {
         root = NULL;
     }
 
-    void insert(int key, information *t) {
+    void insert(T key, information *t) {
         root = insertHelper(root, key, t);
     }
 
@@ -153,175 +151,12 @@ public:
         cout << endl;
     }
 
-    void print_information(AVLNode *node) {
+    void print_information(AVLNode<T> *node) {
         cout << "Id: " << node->info->passid << "\nName: " << node->info->fullname << "\nBirthday: " << node->info->birthday\
         << "\nUniversity: " << node->info->university << "\nDorm: " << node->info->dorm << "\nRoom: " << node->info->room << endl;
     }
 
-    void search(int key) {
-        searchHelper(root, key);
-    }
-};
-
-class AVLNode_string {
-public:
-    string key;
-    int height;
-    AVLNode_string* left;
-    AVLNode_string* right;
-    information* info;
-
-    AVLNode_string(string k, information* t) {
-        key = k;
-        height = 1;
-        left = NULL;
-        right = NULL;
-        info = t;
-    }
-};
-
-int cnt;
-class AVLTree_string {
-private:
-
-    int height(AVLNode_string *node) {
-        if (node == NULL) {
-            return 0;
-        }
-        return node->height;
-    }
-
-    int balanceFactor(AVLNode_string *node) {
-        if (node == NULL) {
-            return 0;
-        }
-        return height(node->left) - height(node->right);
-    }
-
-    void updateHeight(AVLNode_string *node) {
-        int leftHeight = height(node->left);
-        int rightHeight = height(node->right);
-        node->height = max(leftHeight, rightHeight) + 1;
-    }
-
-    AVLNode_string *rotateLeft(AVLNode_string *node) {
-        AVLNode_string *rightChild = node->right;
-        AVLNode_string *leftGrandChild = rightChild->left;
-        rightChild->left = node;
-        node->right = leftGrandChild;
-        updateHeight(node);
-        updateHeight(rightChild);
-        return rightChild;
-    }
-
-    AVLNode_string *rotateRight(AVLNode_string *node) {
-        AVLNode_string *leftChild = node->left;
-        AVLNode_string *rightGrandChild = leftChild->right;
-        leftChild->right = node;
-        node->left = rightGrandChild;
-        updateHeight(node);
-        updateHeight(leftChild);
-        return leftChild;
-    }
-
-    AVLNode_string *balance(AVLNode_string *node) {
-        updateHeight(node);
-        int bf = balanceFactor(node);
-        if (bf > 1) {
-            if (balanceFactor(node->left) < 0) {
-                node->left = rotateLeft(node->left);
-            }
-            return rotateRight(node);
-        } else if (bf < -1) {
-            if (balanceFactor(node->right) > 0) {
-                node->right = rotateRight(node->right);
-            }
-            return rotateLeft(node);
-        }
-        return node;
-    }
-
-    AVLNode_string *insertHelper(AVLNode_string *node, string key, information *t) {
-        if (node == NULL) {
-            return new AVLNode_string(key, t);
-        }
-        if (key <= node->key) {
-            node->left = insertHelper(node->left, key, t);
-        } else {
-            node->right = insertHelper(node->right, key, t);
-        }
-        return balance(node);
-    }
-
-    void printHelper(AVLNode_string *node) {
-        if (node != NULL) {
-            printHelper(node->left);
-            cout << node->info->passid << " " << node->info->fullname << endl;
-            printHelper(node->right);
-        }
-    }
-
-    void printHelperIf(AVLNode_string *node, string t, vector<AVLNode_string*> &temp) {
-        if (node != NULL) {
-            printHelperIf(node->left, t, temp);
-            if (node->info->fullname == t) {
-                cout << cnt++ << " " << node->info->passid << " " << node->info->fullname << endl;
-                temp.push_back(node);
-            }
-            printHelperIf(node->right, t, temp);
-        }
-    }
-
-    void searchHelper(AVLNode_string *node, string key) {
-        if (node != NULL) {
-            if (node->key == key) {
-                vector<AVLNode_string*> temp;
-                cout << "Number    id          Name" << endl;
-                cnt = 1;
-                printHelperIf(node, key, temp);
-                int num;
-                cout << "Enter the student number: ";
-                cin >> num;
-                print_full_information(temp[num-1]);
-            }
-            else {
-                if (node->key > key) {
-                    searchHelper(node->left, key);
-                }
-                else {
-                    searchHelper(node->right, key);
-                }
-            }
-        }
-        else cout << "Not found" << endl;
-    }
-
-public:
-    AVLNode_string *root;
-
-    AVLTree_string() {
-        root = NULL;
-    }
-
-    void insert(string key, information *t) {
-        root = insertHelper(root, key, t);
-    }
-
-    void print() {
-        printHelper(root);
-        cout << endl;
-    }
-
-    void print_information(AVLNode_string *node) {
-        cout << node->info->passid << " " << node->info->fullname << endl;
-    }
-
-    void print_full_information(AVLNode_string *node) {
-        cout << "Id: " << node->info->passid << "\nName: " << node->info->fullname << "\nBirthday: " << node->info->birthday\
-        << "\nUniversity: " << node->info->university << "\nDorm: " << node->info->dorm << "\nRoom: " << node->info->room << endl;
-    }
-
-    void search(string key) {
+    void search(T key) {
         searchHelper(root, key);
     }
 };
@@ -370,8 +205,10 @@ int main() {
         info.push_back(temp);
     }
 
-    AVLTree id_tree;
-    AVLTree_string name_tree;
+    AVLTree<int> id_tree;
+    AVLTree<string> name_tree;
+
+    //AVLTree_string name_tree;
 
     // create duplicates
     information myself(123, "Merkushev Egor Alexeyevich", "01.01.2004", "603", "10", "SPbU");
@@ -408,4 +245,3 @@ int main() {
         if (request == 4) name_tree.print();
     }
 }
-
