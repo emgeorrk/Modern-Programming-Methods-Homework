@@ -91,10 +91,17 @@ int main() {
         path.resize(0);
         used.erase(used.begin(), used.end());
         dfs(v, 0, path);
+        while(ans_path.size() != 0 && tree[ans_path[0]] <= 0) {
+            ans_path.erase(ans_path.cbegin());
+        }
+        // for (auto tt : ans_path) cout << tt << " ";
+        // cout << endl;
+        for (auto p : ans_path) mx += tree[p];
         if (mx > final_sum || (mx == final_sum && final_path.size() > ans_path.size())) {
             final_sum = mx;
             final_path = ans_path;
         }
     }
+    cout << "ANSWER: ";
     for (auto v : final_path) cout << tree[v] << " ";
 }
